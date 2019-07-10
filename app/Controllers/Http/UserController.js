@@ -53,8 +53,6 @@ class UserController {
     // const token = // generate a base64 of the email
     const token = Buffer.from(user.email).toString('base64')
 
-
-
     // send account verification email
     Mail.send('emails.account.verification', {
       user: user.toJSON(),
@@ -72,7 +70,6 @@ class UserController {
         .replyTo('noreply@biddo.ng')
         .to(user.email)
     })
-
 
     trx.commit()// commit transaction
 
