@@ -6,7 +6,7 @@ const { validateAll } = use('Validator')
 const Database = use('Database')
 const Role = use('Role')
 const UserProfile = use('App/Models/UserProfile')
-const Enum = use('App/Utils/Enum')
+const Hash = use('Hash')
 
 const Mail = use('Mail')
 
@@ -81,11 +81,39 @@ class UserController {
 
     async login({ request, response, auth }){
 
-        const {email, password} = request.all();
-        
+        const request_data = request.all();
+        const user = await User.findBy("email",request_data.email)
+
+        if(!user) return response.status(400).json({
+            status:false,
+            message:"Invalid email or password"
+        })
+
+        const verifyPassword = await Hash.verify(request_data.password, user.password)
+
+        // verify if password is valid
+        if(!verifyPassword) return response.status(400).json({
+            status:false,
+            message:"Invalid email or password"
+        })
+
+        const profile = await user.profile().first()
+
+        // check if account has been verified
+        if(!profile.verified_at) return response.status(400).json({
+            status:false,
+            message:"Account has not been verified"
+        })
+
+
         try{
-            const user = await auth.withRefreshToken().attempt(email,password);
-            return response.status(200).json({ token:user.token });
+            const jwt = await auth.generate(user);
+        
+            return response.status(200).json({ 
+                status:true,
+                token:jwt.token,
+                user:user
+             });
         }catch(error){
             return response.status(400).json({ status:false,error:'Something went wrong '+error });
         }

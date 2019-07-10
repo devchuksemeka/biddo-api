@@ -2,6 +2,7 @@
 
 const User = use('App/Models/User')
 const TrackRequest = use('App/Models/TrackRequest')
+const TrackerAcceptRequest = use('App/Models/TrackerAcceptRequest')
 
 class TrackRequestController {
 
@@ -40,11 +41,48 @@ class TrackRequestController {
         })
     }
 
-    async acceptTrack({request,response,auth}){
-        //
+    async accept({request,response,auth}){
+         // get the user making request
+         const request_data = request.all();
+         const tracker_user = await auth.getUser()
+         const profile = await tracker_user.profile().first()
+
+        //  return request_data.request_pin
+
+        // check if request creator is not same with tracker_id
+        const track_request = await TrackRequest.query()
+        .where('creator_app_pin', '=', request_data.request_pin)
+        .andWhere("progress_status","=","ongoing")
+        .first()
+
+        // check if a request is ongoin
+        if(!track_request) return response.status(400).json({
+            status:false,
+            message:"Track request not found"
+        })
+
+        // check if request creator is not same as tracker usr
+        if(tracker_user.id === track_request.creator_user_id ) return response.status(400).json({
+            status:false,
+            message:"You cannot accept your track request"
+        })
+
+        // add to tracker accept request table
+        const addTrackerAcceptRequest = await TrackerAcceptRequest.create({
+            track_request_id:track_request.id,
+            tracker_user_id:tracker_user.id
+        })
+
+        // send notification to the track request creator to accept or reject
+        
+        return response.status(200).json({
+            status:true,
+            message:"Track requested accepted"
+        })
+ 
 
     }
-    async acceptTrackConsent({request,response,auth}){
+    async acceptConsent({request,response,auth}){
 
     }
 

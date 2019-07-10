@@ -12,6 +12,13 @@ const Hash = use('Hash')
 
 class User extends Model {
 
+  static get hidden () {
+    // return ['password']
+  }
+  static get visible () {
+    // return ['password']
+  }
+
   // static get 
   static get traits () {
     return [

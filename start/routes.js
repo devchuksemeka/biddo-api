@@ -30,6 +30,7 @@ Route.group(() => {
     // track request
 
     Route.post(`${track_request}/create`, 'TrackRequestController.create')
+    Route.post(`${track_request}/accept`, 'TrackRequestController.accept')
   
 }).prefix('api/v1').middleware('auth')
 
