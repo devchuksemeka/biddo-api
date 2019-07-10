@@ -6,7 +6,6 @@ const { validateAll } = use('Validator')
 const Database = use('Database')
 const Role = use('Role')
 const UserProfile = use('App/Models/UserProfile')
-const AdminDriverApproval = use('App/Models/AdminDriverApproval')
 const Enum = use('App/Utils/Enum')
 
 const Mail = use('Mail')
@@ -20,7 +19,12 @@ class UserController {
     const trx = await Database.beginTransaction() // begin transaction
 
     // create user 
-    const user = await User.create(request.only(['username', 'email','password']),trx);
+    const user = await User.create(request.only(['email','password']),trx);
+
+    // update user and set the app_pin for user
+    // await User.find(user.id)
+    user.app_pin = `BIDDO-${user.id}`
+    await user.save(trx);
 
     const request_data =request.post();
 
@@ -42,13 +46,6 @@ class UserController {
     // attach user to role
     user.roles().attach([role.id]);
 
-    // if user is driver role add to admin driver approval table
-
-    if(role_selected == Enum.roles.DRIVER.value){
-        await AdminDriverApproval.create({
-            driver_id:user.id
-        },trx)
-    }
 
     // const token = // generate a base64 of the email
     const token = Buffer.from(user.email).toString('base64')
@@ -88,7 +85,7 @@ class UserController {
         
         try{
             const user = await auth.withRefreshToken().attempt(email,password);
-            return response.status(200).json({ user });
+            return response.status(200).json({ token:user.token });
         }catch(error){
             return response.status(400).json({ status:false,error:'Something went wrong '+error });
         }

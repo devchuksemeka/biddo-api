@@ -32,6 +32,12 @@ class UserSeeder {
       email:'admin@biddo.ng',
       password:'secret'
     },trx);
+
+    // update user and set the app_pin for user
+    // await User.find(user.id)
+    user.app_pin = `BIDDO-${user.id}`
+    await user.save(trx);
+
     
 
     /// create a user profile for user

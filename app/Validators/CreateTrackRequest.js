@@ -1,8 +1,6 @@
 'use strict'
 
-const Enum = use('App/Utils/Enum')
-
-class CreateUser {
+class CreateTrackRequest {
   get validateAll () {
     return true
   }
@@ -26,19 +24,10 @@ class CreateUser {
   get message(){
     return {
       'email.required': 'You must provide a email address.',
-      'email.email': 'You must provide a valid email address.',
-      'email.unique': 'This email is already registered.',
-
-
       'password.required': 'You must provide a password',
-
       'phone.required': 'You must provide a password',
-      'phone.unique': 'This phone is already registered.',
-
       'name.required': 'You must provide a password',
-
       'role.required': 'You must provide a role',
-      'role.in': 'Invalid option User Role selected',
     }
   }
 
@@ -47,4 +36,4 @@ class CreateUser {
   }
 }
 
-module.exports = CreateUser
+module.exports = CreateTrackRequest

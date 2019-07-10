@@ -31,8 +31,7 @@ class RolesAndPermissionSeeder {
     }
 
     let adminRole = await Role.findBy('slug',Enum.roles.ADMIN.value);
-    let driverRole = await Role.findBy('slug',Enum.roles.DRIVER.value);
-    let customerRole = await Role.findBy('slug',Enum.roles.CUSTOMER.value);
+    let userRole = await Role.findBy('slug',Enum.roles.USER.value);
 
     const permissions = Enum.permissions.enums
 
@@ -45,17 +44,16 @@ class RolesAndPermissionSeeder {
     }
 
     // permissions
-    const create_request = await Permission.findBy('slug',Enum.permissions.CREATE_REQUEST.value)
-    const accept_request = await Permission.findBy('slug',Enum.permissions.ACCEPT_REQUEST.value)
+    const create_request = await Permission.findBy('slug',Enum.permissions.CREATE_TRACK_REQUEST.value)
+    const accept_request = await Permission.findBy('slug',Enum.permissions.ACCEPT_TRACK_REQUEST.value)
 
     // //assign permissions to roles
-    await customerRole.permissions().attach([
-      create_request.id
+    await userRole.permissions().attach([
+      create_request.id,
+      accept_request.id,
     ])
 
-    await driverRole.permissions().attach([
-      accept_request.id
-    ])
+  
     
 
   }

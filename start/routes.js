@@ -15,6 +15,8 @@
 
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
+
+const track_request = `track-request`
 // add a api prefix
 Route.group(() => {
     Route.post('/signup', 'UserController.register').validator('CreateUser')
@@ -24,6 +26,11 @@ Route.group(() => {
 
 Route.group(() => {
     Route.post('user', 'UserController.getUser')
+
+    // track request
+
+    Route.post(`${track_request}/create`, 'TrackRequestController.create')
+  
 }).prefix('api/v1').middleware('auth')
 
 Route.get('/', ({request,response}) => {

@@ -4,22 +4,16 @@ const Enum  = use('enum')
 
 let roles = new Enum({
     ADMIN: "admin", 
-    DRIVER: "driver", 
-    CUSTOMER: "customer"
+    USER: "user"
 });
 
 let permissions = new Enum({
-    CREATE_REQUEST: "create_request", 
-    ACCEPT_REQUEST: "accept_request"
+    CREATE_TRACK_REQUEST: "create_track_request", 
+    ACCEPT_TRACK_REQUEST: "accept_track_request"
 });
-let admin_driver_approval = new Enum({
-    PENDING: "pending", 
-    APPROVED: "approved",
-    DISAPPROVED: "disapproved",
-});
+
 
 module.exports = {
     roles,
-    permissions,
-    admin_driver_approval
+    permissions
 };

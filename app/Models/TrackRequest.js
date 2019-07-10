@@ -3,7 +3,7 @@
 /** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
 const Model = use('Model')
 
-class AdminDriverApproval extends Model {
+class TrackRequest extends Model {
 }
 
-module.exports = AdminDriverApproval
+module.exports = TrackRequest

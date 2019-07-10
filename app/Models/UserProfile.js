@@ -12,6 +12,10 @@ class UserProfile extends Model {
     //      */
     //     this.addHook('beforeCreate', 'UserProfileHook.createAccountNumber')
     //   }
+
+    user(){
+        return this.belongsTo('App/Models/User','user_id','id')
+    }
 }
 
 module.exports = UserProfile
