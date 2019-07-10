@@ -12,7 +12,7 @@ const Enum = use('App/Utils/Enum')
 const Mail = use('Mail')
 
 class UserController {
-    async store({ request, response, auth }){
+    async register({ request, response, auth }){
 
     const user_model = new User();
 

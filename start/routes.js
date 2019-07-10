@@ -17,7 +17,7 @@
 const Route = use('Route')
 // add a api prefix
 Route.group(() => {
-    Route.post('/signup', 'UserController.store').validator('CreateUser')
+    Route.post('/signup', 'UserController.register').validator('CreateUser')
     Route.post('/login', 'UserController.login').validator('LoginUser')
     Route.get('/verify/:token', 'UserVerificationController.verifyAccountEmail').validator('VerifyEmail')
 }).prefix('api/v1/auth')

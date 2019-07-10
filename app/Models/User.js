@@ -55,10 +55,6 @@ class User extends Model {
   account(){
     return this.belongsTo('App/Models/UserAccount')
   }
-
-  async add(request){
-    
-  }
   
 }
 
