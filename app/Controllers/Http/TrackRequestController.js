@@ -42,6 +42,33 @@ class TrackRequestController {
         })
     }
 
+    // this function updates the track request coordinate by the track request creator
+    // function will be triggered every second
+    async updateTrackRequestCordinate({request,response,auth}){
+
+        const request_data = request.all()
+
+        // get the user making request
+        const user = await auth.getUser()
+
+        // check if the app sending it is the creator app
+        if(user.app_pin !== request_data.app_pin) return response.status(400).json({
+            status:false,
+            message:"You cannot update track request. Not Initiated by your application"
+        })
+
+        // get all ongoing track request of app
+        let ongoing_track_request = await TrackRequest.query()
+        .where("creator_app_pin","=",request_data.app_pin)
+        .andWhere("progress_status","=","ongoing")
+        .update({"creator_coordinates":JSON.stringify(request_data.coordinates)})
+
+        return response.status(201).json({
+            status:true,
+            message:"Track request coordinate updated successfully"
+        })
+    }
+
     async accept({request,response,auth}){
 
         // add validator
