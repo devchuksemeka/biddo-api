@@ -7,15 +7,17 @@ class AcceptTrackConsent {
 
   get rules () {
     return {
-      track_request_id:'required',
-      tracker_user_id:'required',
+      track_request_id:'required|exists:track_requests,id',
+      tracker_user_id:'required|exists:users,id',
     }
   }
 
-  get message(){
+  get messages(){
     return {
       'track_request_id.required' : 'You must provide a the Request to be tracked.',
-      'tracker_user_id.required' : 'You must provide a the tracker user.'
+      'track_request_id.exists' : 'Invalid Track Request supplied.',
+      'tracker_user_id.required' : 'You must provide a the tracker user.',
+      'tracker_user_id.exists' : 'Invalid tracker user entered.'
     }
   }
 

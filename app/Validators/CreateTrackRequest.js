@@ -7,13 +7,16 @@ class CreateTrackRequest {
 
   get rules () {
     return {
-      coordinates:'required',
+      coordinates:'required|object_format|object_contains:latitude,longitude',
+      // coordinates:'required|object|contain:latitude,longitude',
     }
   }
 
-  get message(){
+  get messages(){
     return {
-      'coordinates.required' : 'You must provide a coordinates.'
+      'coordinates.required' : 'You must provide a coordinates.',
+      'coordinates.object_format' : 'Coordinates must be in object format.',
+      'coordinates.object_contains' : 'Coordinates must contain latitude and longitude.',
     }
   }
 

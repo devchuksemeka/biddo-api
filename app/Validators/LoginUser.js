@@ -13,14 +13,15 @@ class LoginUser {
 
   get rules () {
     return {
-      email:'required|email',
+      email:'required|email|exists:users,email',
       password:'required',
     }
   }
 
-  get message(){
+  get messages(){
     return {
       'email.required': 'You must provide a email address.',
+      'email.exists': 'Invalid Email supplied.',
       'email.email': 'You must provide a valid email address.',
       // 'email.in': 'This email does not match any on our system.',
 

@@ -28,7 +28,6 @@ Route.group(() => {
     Route.post('user', 'UserController.getUser')
 
     // track request
-
     Route.post(`${track_request}/create`, 'TrackRequestController.create').validator('CreateTrackRequest')
     Route.post(`${track_request}/accept`, 'TrackRequestController.accept').validator("TrackerAcceptTrackRequest")
     Route.post(`${track_request}/accept-track-consent`, 'TrackRequestController.acceptTrackConsent').validator("AcceptTrackConsent")

@@ -7,13 +7,14 @@ class TrackerAcceptTrackRequest {
 
   get rules () {
     return {
-      request_pin:'required',
+      request_pin:'required|exists:users,app_pin',
     }
   }
 
-  get message(){
+  get messages(){
     return {
       'request_pin.required' : 'You must provide a the App to be tracked.',
+      'request_pin.exists' : 'Invalid App Pin Supplied.',
     }
   }
 
