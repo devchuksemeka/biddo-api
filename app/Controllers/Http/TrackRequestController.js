@@ -95,7 +95,15 @@ class TrackRequestController {
         // get tracker user id
         const creator_user = await auth.getUser()
 
+        
+
         const track_request = await TrackRequest.find(request_data.track_request_id)
+
+        // check if the app accepting the consent is the app creator
+        if(creator_user.app_pin != track_request.creator_app_pin) return response.status(401).json({
+            status:false,
+            message:"You cannot accept track consent, Unauthorize action"
+        })
 
         
         const tracker_user_ids = JSON.parse(track_request.tracker_user_ids);
@@ -103,7 +111,7 @@ class TrackRequestController {
         // check if the tracker_user_id exist in tracker user ids
         if(tracker_user_ids.includes(request_data.tracker_user_id)) return response.status(400).json({
             status: false,
-            message: "Tracker user id already accepted",
+            message: "Tracker user already accepted",
         })
 
 
@@ -112,7 +120,6 @@ class TrackRequestController {
             status: false,
             message: "Track request already end",
         })
-
         
         const tracker_accept_request = await TrackerAcceptRequest.query()
         .where("track_request_id","=",request_data.track_request_id)
