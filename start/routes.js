@@ -29,13 +29,16 @@ Route.group(() => {
 
     // track request
 
-    Route.post(`${track_request}/create`, 'TrackRequestController.create')
+    Route.post(`${track_request}/create`, 'TrackRequestController.create').validator('CreateTrackRequest')
     Route.post(`${track_request}/accept`, 'TrackRequestController.accept')
+    Route.post(`${track_request}/accept-track-consent`, 'TrackRequestController.acceptTrackConsent')
   
 }).prefix('api/v1').middleware('auth')
 
 Route.get('/', ({request,response}) => {
-  return response.json({ greeting: request.all() })
+  return response.json({ 
+    greeting : request.all()
+  })
 })
 
 Route.get('test_enum', 'TestController.testEnum')

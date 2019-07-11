@@ -2,6 +2,7 @@
 
 const User = use('App/Models/User')
 const TrackRequest = use('App/Models/TrackRequest')
+const Database = use('Database')
 const TrackerAcceptRequest = use('App/Models/TrackerAcceptRequest')
 
 class TrackRequestController {
@@ -30,7 +31,7 @@ class TrackRequestController {
                 latitude:3.223334343,
                 longitude:6.223334343,
             }),
-
+            tracker_user_ids:JSON.stringify([])
         })
 
         // send email notification to all trackers
@@ -42,12 +43,13 @@ class TrackRequestController {
     }
 
     async accept({request,response,auth}){
+
+        // add validator
+
          // get the user making request
          const request_data = request.all();
          const tracker_user = await auth.getUser()
-         const profile = await tracker_user.profile().first()
 
-        //  return request_data.request_pin
 
         // check if request creator is not same with tracker_id
         const track_request = await TrackRequest.query()
@@ -67,8 +69,10 @@ class TrackRequestController {
             message:"You cannot accept your track request"
         })
 
+        // check if such accept track request has not been created before
+
         // add to tracker accept request table
-        const addTrackerAcceptRequest = await TrackerAcceptRequest.create({
+        await TrackerAcceptRequest.create({
             track_request_id:track_request.id,
             tracker_user_id:tracker_user.id
         })
@@ -82,8 +86,73 @@ class TrackRequestController {
  
 
     }
-    async acceptConsent({request,response,auth}){
 
+    async acceptTrackConsent({request,response,auth}){
+
+        const request_data = request.all()
+
+        // get the track request id
+        // get tracker user id
+        const creator_user = await auth.getUser()
+
+        const track_request = await TrackRequest.find(request_data.track_request_id)
+
+        
+        const tracker_user_ids = JSON.parse(track_request.tracker_user_ids);
+
+        // check if the tracker_user_id exist in tracker user ids
+        if(tracker_user_ids.includes(request_data.tracker_user_id)) return response.status(400).json({
+            status: false,
+            message: "Tracker user id already accepted",
+        })
+
+
+        // check if request is still on
+        if(track_request.progress_status !== "ongoing") return response.status(400).json({
+            status: false,
+            message: "Track request already end",
+        })
+
+        
+        const tracker_accept_request = await TrackerAcceptRequest.query()
+        .where("track_request_id","=",request_data.track_request_id)
+        .andWhere("tracker_user_id","=",request_data.tracker_user_id)
+        .first()
+
+        // check if track accept request exist
+        if(!tracker_accept_request) return response.status(400).json({
+            status: false,
+            message: "Track accept request not found",
+        })
+
+        // check if creator approval status is pending
+        if(tracker_accept_request.creator_approval_status !== "pending") return response.status(400).json({
+            status: false,
+            message: "Track accept request have already been processed",
+        })
+
+        // push to the tracker user id with the new user id
+        tracker_user_ids.push(request_data.tracker_user_id)
+        
+        // place this process in database transaction process
+        const trx = await Database.beginTransaction()
+
+
+        // accept it and update the track request table with the tracker user id
+        track_request.tracker_user_ids =  JSON.stringify(tracker_user_ids)
+
+        await track_request.save(trx)
+
+
+        // delete the record from the tracker accept request
+        await tracker_accept_request.delete(trx)
+
+        trx.commit()
+
+        return response.status(200).json({
+            status:true,
+            message:"Accept Track Request Consent"
+        })
     }
 
 

@@ -5,29 +5,15 @@ class CreateTrackRequest {
     return true
   }
 
-  get sanitizationRules () {
-    return {
-      email: 'normalize_email',
-    }
-  }
-
   get rules () {
     return {
-      email:'required|email|unique:users',
-      password:'required',
-      phone:'required|unique:user_profiles',
-      name: 'required',
-      role:`required|in:${Enum.roles.USER.value}`
+      coordinates:'required',
     }
   }
 
   get message(){
     return {
-      'email.required': 'You must provide a email address.',
-      'password.required': 'You must provide a password',
-      'phone.required': 'You must provide a password',
-      'name.required': 'You must provide a password',
-      'role.required': 'You must provide a role',
+      'coordinates.required' : 'You must provide a coordinates.'
     }
   }
 
