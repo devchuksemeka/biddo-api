@@ -30,8 +30,8 @@ Route.group(() => {
     // track request
 
     Route.post(`${track_request}/create`, 'TrackRequestController.create').validator('CreateTrackRequest')
-    Route.post(`${track_request}/accept`, 'TrackRequestController.accept')
-    Route.post(`${track_request}/accept-track-consent`, 'TrackRequestController.acceptTrackConsent')
+    Route.post(`${track_request}/accept`, 'TrackRequestController.accept').validator("TrackerAcceptTrackRequest")
+    Route.post(`${track_request}/accept-track-consent`, 'TrackRequestController.acceptTrackConsent').validator("AcceptTrackConsent")
   
 }).prefix('api/v1').middleware('auth')
 
