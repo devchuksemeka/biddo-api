@@ -16,6 +16,8 @@
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
 
+
+
 const track_request = `track-request`
 // add a api prefix
 Route.group(() => {
@@ -41,4 +43,6 @@ Route.get('/', ({request,response}) => {
   })
 })
 
-Route.get('test_enum', 'TestController.testEnum')
+Route.get('welcome', ({view}) =>{
+  return view.render('welcome')
+})
