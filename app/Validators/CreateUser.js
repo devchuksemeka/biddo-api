@@ -19,7 +19,7 @@ class CreateUser {
       password:'required',
       phone:'required|unique:user_profiles',
       name: 'required',
-      role:`required|in:${Enum.roles.USER.value}`
+      code:'exists:track_cycles,code'
     }
   }
 
@@ -39,6 +39,9 @@ class CreateUser {
 
       'role.required': 'You must provide a role',
       'role.in': 'Invalid option User Role selected',
+
+
+      'code.exists': 'Invalid track cycle code supplied',
     }
   }
 

@@ -7,6 +7,10 @@ const Database = use('Database')
 const Role = use('Role')
 const UserProfile = use('App/Models/UserProfile')
 const Hash = use('Hash')
+const TrackCycleMember = use('App/Models/TrackCycleMember')
+const NonAppUserAddMemberToCycle = use('App/Models/NonAppUserAddMemberToCycle')
+
+const Enum = use('App/Utils/Enum')
 
 const Mail = use('Mail')
 
@@ -28,7 +32,8 @@ class UserController {
 
     const request_data =request.post();
 
-    const role_selected = request_data.role
+    const role_selected = Enum.roles.USER.value
+    // const role_selected = request_data.role
     // check if selected role is valid
     const role = await Role.findBy("slug",role_selected);
     if(!role) return response.status(400).json({
@@ -45,6 +50,55 @@ class UserController {
 
     // attach user to role
     user.roles().attach([role.id]);
+
+    // check if track cycle code is supplied
+    if(request_data.code){
+
+        // check if member already in track cycle
+        const user_in_track_cycle = await TrackCycleMember.query()
+            .where("user_id","=",user.id)
+            .andWhere("track_cycle_code","=",request_data.code)
+            .first()
+
+        // if user has not been added to cycle
+        if(!user_in_track_cycle) {
+            // add member to group
+            const memberAdded = await TrackCycleMember.create({
+                track_cycle_code : request_data.code,
+                user_id : user.id
+            },trx)
+
+            // check if member has been invited prior before
+            const non_app_user_add_member = await NonAppUserAddMemberToCycle.query()
+                .where("email","=",request_data.email)
+                .andWhere("track_cycle_code","=",request_data.code)
+                .first()
+
+            // if yes : remove invite request
+            if(non_app_user_add_member) {
+                await non_app_user_add_member.delete(trx)
+            }
+        }
+    }else{
+        // check if member has been invited prior before
+        const non_app_user_add_member = await NonAppUserAddMemberToCycle.query()
+            .where("email","=",request_data.email)
+            .andWhere("track_cycle_code","=",request_data.code)
+            .first()
+
+        // if yes add member to track cycle
+        if(non_app_user_add_member) {
+            // add member to group
+            const memberAdded = await TrackCycleMember.create({
+                track_cycle_code : request_data.code,
+                user_id : user.id
+            },trx)
+
+            //finally delete non_app_user_add_member request
+
+            await non_app_user_add_member.delete(trx)
+        }
+    }
 
 
     // const token = // generate a base64 of the email
