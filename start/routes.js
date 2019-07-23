@@ -19,6 +19,9 @@ const Route = use('Route')
 
 
 const track_request = `track-request`
+const track_cycle = `track-cycle`
+
+
 // add a api prefix
 Route.group(() => {
     Route.post('/signup', 'UserController.register').validator('CreateUser')
@@ -27,22 +30,26 @@ Route.group(() => {
 }).prefix('api/v1/auth')
 
 Route.group(() => {
-    Route.post('user', 'UserController.getUser')
+    // Route.get('user', 'UserController.getUser')
 
     // track request
     Route.post(`${track_request}/create`, 'TrackRequestController.create').validator('CreateTrackRequest')
     Route.post(`${track_request}/accept`, 'TrackRequestController.accept').validator("TrackerAcceptTrackRequest")
     Route.post(`${track_request}/accept-track-consent`, 'TrackRequestController.acceptTrackConsent').validator("AcceptTrackConsent")
-    Route.post(`${track_request}/update-coordinate`, 'TrackRequestController.updateTrackRequestCordinate').validator("UpdateTrackRequestCoordinate")
+
+    // track cycle
+    Route.post(`${track_cycle}/create`, 'TrackCycleController.create').validator('CreateTrackCycle')
+
+    // Route.post(`${track_request}/update-coordinate`, 'TrackRequestController.updateTrackRequestCordinate').validator("UpdateTrackRequestCoordinate")
   
 }).prefix('api/v1').middleware('auth')
 
-Route.get('/', ({request,response}) => {
-  return response.json({ 
-    greeting : request.all()
-  })
-})
+// Route.get('/', ({request,response}) => {
+//   return response.json({ 
+//     greeting : request.all()
+//   })
+// })
 
-Route.get('welcome', ({view}) =>{
-  return view.render('welcome')
-})
+// Route.get('welcome', ({view}) =>{
+//   return view.render('welcome')
+// })
