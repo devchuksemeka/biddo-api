@@ -39,6 +39,7 @@ Route.group(() => {
 
     // track cycle
     Route.post(`${track_cycle}/create`, 'TrackCycleController.create').validator('CreateTrackCycle')
+    Route.post(`${track_cycle}/join`, 'TrackCycleController.join').validator('JoinTrackCycle')
 
     // Route.post(`${track_request}/update-coordinate`, 'TrackRequestController.updateTrackRequestCordinate').validator("UpdateTrackRequestCoordinate")
   
