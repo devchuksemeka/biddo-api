@@ -17,8 +17,10 @@ class CreateUser {
     return {
       email:'required|email|unique:users',
       password:'required',
-      phone:'required|unique:user_profiles',
-      name: 'required',
+      phone:'unique:user_profiles',
+      first_name: 'required',
+      last_name: 'required',
+      role:`required|in:${Enum.roles.USER.value},${Enum.roles.DRIVER.value}`,
       code:'exists:track_cycles,code'
     }
   }
@@ -32,10 +34,10 @@ class CreateUser {
 
       'password.required': 'You must provide a password',
 
-      'phone.required': 'You must provide a password',
       'phone.unique': 'This phone is already registered.',
 
-      'name.required': 'You must provide a password',
+      'first_name.required': 'You must provide a first name',
+      'last_name.required': 'You must provide a last name',
 
       'role.required': 'You must provide a role',
       'role.in': 'Invalid option User Role selected',

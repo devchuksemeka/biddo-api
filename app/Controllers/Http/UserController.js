@@ -2,7 +2,6 @@
 
 const User = use('App/Models/User');
 
-const { validateAll } = use('Validator')
 const Database = use('Database')
 const Role = use('Role')
 const UserProfile = use('App/Models/UserProfile')
@@ -27,12 +26,12 @@ class UserController {
 
     // update user and set the app_pin for user
     // await User.find(user.id)
-    user.app_pin = `BIDDO-${user.id}`
+    user.app_pin = `BIDDO${user.id}`
     await user.save(trx);
 
     const request_data =request.post();
 
-    const role_selected = Enum.roles.USER.value
+    const role_selected = request_data.role
     // const role_selected = request_data.role
     // check if selected role is valid
     const role = await Role.findBy("slug",role_selected);
@@ -43,7 +42,7 @@ class UserController {
 
     /// create a user profile for user
     const profile = await UserProfile.create({
-      name:request_data.name,
+      name:`${request_data.first_name} ${request_data.last_name}`,
       phone:request_data.phone,
       user_id:user.id,
     },trx)
@@ -53,7 +52,6 @@ class UserController {
 
     // check if track cycle code is supplied
     if(request_data.code){
-
         // check if member already in track cycle
         const user_in_track_cycle = await TrackCycleMember.query()
             .where("user_id","=",user.id)
@@ -78,59 +76,65 @@ class UserController {
             if(non_app_user_add_member) {
                 await non_app_user_add_member.delete(trx)
             }
+
         }
     }else{
         // check if member has been invited prior before
         const non_app_user_add_member = await NonAppUserAddMemberToCycle.query()
             .where("email","=",request_data.email)
-            .andWhere("track_cycle_code","=",request_data.code)
-            .first()
+            .fetch()
+        
+        const sizeLenght = non_app_user_add_member.rows.length;
 
-        // if yes add member to track cycle
-        if(non_app_user_add_member) {
-            // add member to group
-            const memberAdded = await TrackCycleMember.create({
-                track_cycle_code : request_data.code,
-                user_id : user.id
-            },trx)
+            
+            // for each of the invitation add member to track cycle and delete invitation
+            for(let i=0; i < sizeLenght;i++){
+                // add member to group
+                const memberAdded = await TrackCycleMember.create({
+                    track_cycle_code : non_app_user_add_member[i].track_cycle_code,
+                    user_id : user.id
+                },trx)
 
-            //finally delete non_app_user_add_member request
+                //finally delete non_app_user_add_member request
 
-            await non_app_user_add_member.delete(trx)
-        }
+                const non_app = await NonAppUserAddMemberToCycle.find(non_app_user_add_member[i].id)
+
+                await non_app.delete(trx)
+            }
+            
     }
 
 
-    // const token = // generate a base64 of the email
-    const token = Buffer.from(user.email).toString('base64')
+        // const token = // generate a base64 of the email
+        const token = Buffer.from(user.email).toString('base64')
 
-    // send account verification email
-    Mail.send('emails.account.verification', {
-      user: user.toJSON(),
-      activate_url:`http://localhost:3333/api/v1/auth/verify/${token}`,
-      socials:{
-        facebook:'#',
-        instagram:'#',
-        pinterest:'#',
-        youtube:'#',
-        twitter:'#',
-      }
-    }, (message) => {
-      message
-        .subject('Biddo Account Email Verification')
-        .replyTo('noreply@biddo.ng')
-        .to(user.email)
-    })
+        // send account verification email
+        Mail.send('emails.account.verification', {
+        user: user.toJSON(),
+        activate_url:`http://localhost:3333/api/v1/auth/verify/${token}`,
+        socials:{
+            facebook:'#',
+            instagram:'#',
+            pinterest:'#',
+            youtube:'#',
+            twitter:'#',
+        }
+        }, (message) => {
+        message
+            .subject('Biddo Account Email Verification')
+            .replyTo('noreply@biddo.ng')
+            .to(user.email)
+        })
 
-    trx.commit()// commit transaction
+        trx.commit()// commit transaction
 
-    // return user
+        // return user
 
-    return response.status(201).json({
-        status:true,
-        message:'Account created successful',
-        payload:user
-    });
+        return response.status(201).json({
+            status:true,
+            message:'Account created successful',
+            payload:user
+        });
     }
 
     async login({ request, response, auth }){

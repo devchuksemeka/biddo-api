@@ -3,8 +3,9 @@
 const Enum  = use('enum')
 
 let roles = new Enum({
-    ADMIN: "admin", 
-    USER: "user"
+    ADMIN: "admin",
+    USER: "user",
+    DRIVER: "driver",
 });
 
 let permissions = new Enum({

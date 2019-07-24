@@ -35,7 +35,7 @@ class UserSeeder {
 
     // update user and set the app_pin for user
     // await User.find(user.id)
-    user.app_pin = `BIDDO-${user.id}`
+    user.app_pin = `BIDDO${user.id}`
     await user.save(trx);
 
     

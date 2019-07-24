@@ -9,7 +9,7 @@ class UserProfileSchema extends Schema {
       table.increments()
       table.bigInteger('user_id').notNullable().unique()
       table.string('image_path', 250).nullable()
-      table.string('phone', 200).notNullable().unique()
+      table.string('phone', 200).unique()
       table.string('referral_code', 200)
       table.string('name', 250)
       table.timestamp('verified_at').nullable().defaultTo(null)
