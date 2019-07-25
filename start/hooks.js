@@ -4,6 +4,7 @@ hooks.after.providersRegistered(() => {
 
     const Validator = use('Validator')
     const Database = use('Database')
+    const Moment = use("moment");
     
     const existsFn = async (data, field, message, args, get) => {
       const value = get(data, field)
@@ -22,6 +23,8 @@ hooks.after.providersRegistered(() => {
         throw message
       }
     }
+
+  
 
     const objectFormat = async (data, field, message, args, get) => {
       const value = get(data, field)
@@ -55,8 +58,23 @@ hooks.after.providersRegistered(() => {
       }
 
     }
+
+    const dateTimeFormat = async (data, field, message, args, get) => {
+      const value = get(data, field);
+    
+      if (!value) {
+        return;
+      }
+    
+      const valid = Moment(value, "YYYY-MM-DD HH:mm:ss", true);
+    
+      if (valid.isValid() === false) {
+        throw message;
+      }
+    };
     
     Validator.extend('exists', existsFn)
+    Validator.extend('dateTimeFormat', dateTimeFormat)
     Validator.extend('objectFormat', objectFormat)
     Validator.extend('objectContains', objectContains)
     

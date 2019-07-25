@@ -13,8 +13,28 @@ let permissions = new Enum({
     ACCEPT_TRACK_REQUEST: "accept_track_request"
 });
 
+let trip_status = new Enum({
+    PENDING: "pending",
+    ENROUTE: "enroute",
+    COMPLETED: "completed",
+});
+
+let trip_types = new Enum({
+    IMMEDIATE: "immediate",
+    SCHEDULE: "schedule",
+});
+
+let schedule_categories = new Enum({
+    ONE_OFF: "one_off",
+    DAILY: "daily",
+    WEEKLY: "weekly",
+    MONTHLY: "monthly",
+});
 
 module.exports = {
     roles,
-    permissions
+    permissions,
+    trip_status,
+    trip_types,
+    schedule_categories,
 };

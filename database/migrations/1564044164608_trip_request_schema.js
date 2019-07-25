@@ -3,6 +3,7 @@
 /** @type {import('@adonisjs/lucid/src/Schema')} */
 const Schema = use('Schema')
 
+const Enum = use('App/Utils/Enum')
 class TripRequestSchema extends Schema {
   up () {
     this.create('trip_requests', (table) => {
@@ -11,7 +12,8 @@ class TripRequestSchema extends Schema {
       table.bigInteger("accepter_user_id")
       table.json("creator_coordinates").notNullable()
       table.json("enroute_coordinates")
-      table.enum("status",["pending","enroute","completed"]).notNullable().defaultTo("pending")
+      table.enum("status",[Enum.trip_status.PENDING.value,Enum.trip_status.ENROUTE.value,Enum.trip_status.COMPLETED.value])
+        .notNullable().defaultTo(Enum.trip_status.PENDING.value)
       table.timestamp('enroute_starts_at').nullable().defaultTo(null)
       table.timestamp('enroute_ends_at').nullable().defaultTo(null)
       table.timestamps()
