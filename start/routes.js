@@ -20,6 +20,7 @@ const Route = use('Route')
 
 const track_request = `track-request`
 const track_cycle = `track-cycle`
+const trip_request = `trip-request`
 
 
 // add a api prefix
@@ -41,6 +42,11 @@ Route.group(() => {
     Route.post(`${track_cycle}/create`, 'TrackCycleController.create').validator('CreateTrackCycle')
     Route.post(`${track_cycle}/join`, 'TrackCycleController.join').validator('JoinTrackCycle')
     Route.post(`${track_cycle}/add-member`, 'TrackCycleController.addMember').validator('AddMemberToTrackCycle')
+
+    // track cycle
+    Route.post(`${trip_request}/create`, 'TripRequestController.create').validator('CreateTripRequest')
+    // Route.post(`${track_cycle}/join`, 'TrackCycleController.join').validator('JoinTrackCycle')
+    // Route.post(`${track_cycle}/add-member`, 'TrackCycleController.addMember').validator('AddMemberToTrackCycle')
 
     // Route.post(`${track_request}/update-coordinate`, 'TrackRequestController.updateTrackRequestCordinate').validator("UpdateTrackRequestCoordinate")
   

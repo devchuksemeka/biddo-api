@@ -87,20 +87,20 @@ class UserController {
         const sizeLenght = non_app_user_add_member.rows.length;
 
             
-            // for each of the invitation add member to track cycle and delete invitation
-            for(let i=0; i < sizeLenght;i++){
-                // add member to group
-                const memberAdded = await TrackCycleMember.create({
-                    track_cycle_code : non_app_user_add_member[i].track_cycle_code,
-                    user_id : user.id
-                },trx)
+        // for each of the invitation add member to track cycle and delete invitation
+        for(let i=0; i < sizeLenght;i++){
+            // add member to group
+            const memberAdded = await TrackCycleMember.create({
+                track_cycle_code : non_app_user_add_member[i].track_cycle_code,
+                user_id : user.id
+            },trx)
 
-                //finally delete non_app_user_add_member request
+            //finally delete non_app_user_add_member request
 
-                const non_app = await NonAppUserAddMemberToCycle.find(non_app_user_add_member[i].id)
+            const non_app = await NonAppUserAddMemberToCycle.find(non_app_user_add_member[i].id)
 
-                await non_app.delete(trx)
-            }
+            await non_app.delete(trx)
+        }
             
     }
 
