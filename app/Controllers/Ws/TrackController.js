@@ -17,6 +17,22 @@ class TrackController {
     return user
   }
 
+  // async validateTopic(){
+
+    // const app_pin = this.topic.split(":")[1]
+    // console.log(app_pin)
+
+    // // query the database table
+    // // if app_pin found in track request and not ongoing cancel
+    // const track_request = await TrackRequest.query()
+    // .andWhere("creator_app_pin","=",app_pin)
+    // .andWhere("progress_status","=","ongoing")
+    // .first()
+
+    // if track request if empty close all connection
+
+  // }
+
   // create a function that checks if this user have right to update coordinate
   async updateCoordinate(coordinates){
 

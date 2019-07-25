@@ -6,7 +6,10 @@ class TripRequestController {
     this.request = request
   }
 
-  
+  // system uses this to broadcast request to drivers
+  onRequest(){
+
+  }
 }
 
 module.exports = TripRequestController

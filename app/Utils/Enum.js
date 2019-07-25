@@ -17,6 +17,8 @@ let trip_status = new Enum({
     PENDING: "pending",
     ENROUTE: "enroute",
     COMPLETED: "completed",
+    CANCELLED: "cancelled",
+    ACCEPTED: "accepted",
 });
 
 let trip_types = new Enum({

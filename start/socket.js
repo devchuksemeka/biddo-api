@@ -15,7 +15,8 @@
 
 const Ws = use('Ws')
 
-
 Ws.channel(`tracking:*`,"TrackController").middleware("auth")//get app name
+
+Ws.channel(`trip_request:*`,"TripRequestController").middleware("auth")
 
 

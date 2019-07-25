@@ -12,7 +12,13 @@ class TripRequestSchema extends Schema {
       table.bigInteger("accepter_user_id")
       table.json("creator_coordinates").notNullable()
       table.json("enroute_coordinates")
-      table.enum("status",[Enum.trip_status.PENDING.value,Enum.trip_status.ENROUTE.value,Enum.trip_status.COMPLETED.value])
+      table.enum("status",[
+          Enum.trip_status.PENDING.value,
+          Enum.trip_status.ACCEPTED.value,
+          Enum.trip_status.ENROUTE.value,
+          Enum.trip_status.COMPLETED.value,
+          Enum.trip_status.CANCELLED.value
+        ])
         .notNullable().defaultTo(Enum.trip_status.PENDING.value)
       table.timestamp('enroute_starts_at').nullable().defaultTo(null)
       table.timestamp('enroute_ends_at').nullable().defaultTo(null)

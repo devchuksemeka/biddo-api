@@ -45,8 +45,7 @@ Route.group(() => {
 
     // track cycle
     Route.post(`${trip_request}/create`, 'TripRequestController.create').validator('CreateTripRequest')
-    // Route.post(`${track_cycle}/join`, 'TrackCycleController.join').validator('JoinTrackCycle')
-    // Route.post(`${track_cycle}/add-member`, 'TrackCycleController.addMember').validator('AddMemberToTrackCycle')
+    Route.post(`${trip_request}/accept`, 'TripRequestController.accept').validator('AcceptTripRequest')
 
     // Route.post(`${track_request}/update-coordinate`, 'TrackRequestController.updateTrackRequestCordinate').validator("UpdateTrackRequestCoordinate")
   

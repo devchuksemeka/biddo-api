@@ -96,6 +96,48 @@ class TripRequestController {
     // note when a create request is cancelled by client
     // close events
     // close channel opened
+
+    async accept({request, response,auth}){
+
+        const request_data = request.all()
+        const user = await auth.getUser()
+
+        // check user role
+        const user_role = await user.getRoles()
+
+        if(user_role[0] != Enum.roles.DRIVER.value) return response.status(404).json({
+            status:false,
+            message:"No access permission to perform action"
+        })
+
+        
+        const trip_request = await TripRequest.find(request_data.trip_request)
+
+        // check if trip request is still pending
+        if(trip_request.status != Enum.trip_status.PENDING.value) return response.status(400).json({
+            status:false,
+            message:"Trip cannot be accepted. Trip status does not allow acceptance"
+        })
+
+        // check that is not same user accepting the request
+        if(trip_request.requester_user_id == user.id) return response.status(400).json({
+            status:false,
+            message:"Cannot Accept Trip Request Initiated By You"
+        })
+
+        // update the trip request table 
+        trip_request.merge({
+            accepter_user_id:user.id,
+            status:Enum.trip_status.ACCEPTED.value
+        })
+
+        await trip_request.save()
+
+        return response.status(200).json({
+            status:true,
+            message:"Request Accepted Successfully"
+        })
+    }
 }
 
 module.exports = TripRequestController

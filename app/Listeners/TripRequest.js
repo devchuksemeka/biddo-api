@@ -19,7 +19,7 @@ TripRequest.findDriver = async (params) => {
 
      
     
-    users.forEach(element => {
-        console.log(element.id)
-    });
+    // users.forEach(element => {
+    //     console.log(element.id)
+    // });
 }
