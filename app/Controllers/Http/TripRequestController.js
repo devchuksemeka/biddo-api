@@ -3,8 +3,8 @@
 const TripRequest = use('App/Models/TripRequest')
 const TripSchedule = use('App/Models/TripSchedule')
 const Enum = use('App/Utils/Enum')
-const ScheduleTripValidator = use('App/Validators/ScheduleTrip')
 const {validateAll} = use('Validator')
+const Event = use('Event')
 
 class TripRequestController {
 
@@ -28,34 +28,42 @@ class TripRequestController {
         // get the trip request type
         const trip_request_type = request_data.type
 
-        // if trip request type is immediate
+        // create a payload data
+        let payload = {}
 
+        // if trip request type is immediate
         if(trip_request_type == Enum.trip_types.IMMEDIATE.value){
             // add request to trip request table
             const createdTripRequest = await TripRequest.create({
                 requester_user_id : user.id,
                 creator_coordinates :JSON.stringify(request_data.coordinates)
             })
-        }else  if(trip_request_type == Enum.trip_types.SCHEDULE.value){
 
-            const scheduleValidator = new ScheduleTripValidator()
+            payload = createdTripRequest
+
+            // emit an event that begins the driver searching
+            Event.fire('trip_request::find_driver', payload)
+        }
+        // if trip request type is schedule
+        else  if(trip_request_type == Enum.trip_types.SCHEDULE.value){
             
             // run core validator for schedule request
-            const validation = await validateAll(request_data,{
-                type:`required|in:${Enum.trip_types.SCHEDULE.value}`,
-                category:`required|in:${Enum.schedule_categories.ONE_OFF.value},${Enum.schedule_categories.DAILY.value},${Enum.schedule_categories.WEEKLY.value},${Enum.schedule_categories.MONTHLY.value}`,
-                start_date_time:`required|date_time_format`,
-              },{
-                'type.required' : 'You must provide trip request type.',
-                'type.in' : 'Invalid Trip request option selected.', 
-                
+            const validation = await validateAll(request_data,
+                {
+                    type:`required|in:${Enum.trip_types.SCHEDULE.value}`,
+                    category:`required|in:${Enum.schedule_categories.ONE_OFF.value},${Enum.schedule_categories.DAILY.value},${Enum.schedule_categories.WEEKLY.value},${Enum.schedule_categories.MONTHLY.value}`,
+                    start_date_time:`required|date_time_format`,
+                },
+                {
+                    'type.required' : 'You must provide trip request type.',
+                    'type.in' : 'Invalid Trip request option selected.', 
+                    
+                    'category.required' : 'You must provide category of your schedule trip.',
+                    'category.in' : 'You must provide a valid trip schedule category option.',
 
-                'category.required' : 'You must provide category of your schedule trip.',
-                'category.in' : 'You must provide a valid trip schedule category option.',
-
-                'start_date_time.required' : 'You must provide a start date time for your scheduled trip.',
-                'start_date_time.date_time_format' : 'Invalid trip schedule date format supplied.',
-              });
+                    'start_date_time.required' : 'You must provide a start date time for your scheduled trip.',
+                    'start_date_time.date_time_format' : 'Invalid trip schedule date format supplied.',
+                });
 
             if(validation.fails()) return response.status(400).json({
                 status:false,
@@ -69,19 +77,25 @@ class TripRequestController {
                 category : request_data.category,
                 start_at:request_data.start_date_time
             })
-        }        
 
+            payload = scheduleTrip
+        }
 
-        // open a websocket event to the user waiting for drivers to accept request
-
-        
-
+        // in the response value 
+        // if the trip type is immediate
+        // use the payload id to subscribe to a channel
 
         return response.status(200).json({
             status:true,
-            message:"Trip request created successfully"
+            message:"Trip request created successfully",
+            trip_type:request_data.type,
+            payload: payload
         })
     }
+
+    // note when a create request is cancelled by client
+    // close events
+    // close channel opened
 }
 
 module.exports = TripRequestController

@@ -62,6 +62,10 @@ class User extends Model {
   account(){
     return this.belongsTo('App/Models/UserAccount')
   }
+
+  // role (role_name) {
+  //   return this.hasOne('App/Models/Profile')
+  // }
   
 }
 

@@ -161,7 +161,7 @@ class UserController {
         if(!profile.verified_at) return response.status(400).json({
             status:false,
             message:"Account has not been verified"
-        })
+        })  
 
 
         try{
