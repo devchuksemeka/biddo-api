@@ -23,6 +23,9 @@ const track_cycle = `track-cycle`
 const trip_request = `trip-request`
 
 
+const settings = `settings`
+
+
 // add a api prefix
 Route.group(() => {
     Route.post('/signup', 'UserController.register').validator('CreateUser')
@@ -46,6 +49,10 @@ Route.group(() => {
     // track cycle
     Route.post(`${trip_request}/create`, 'TripRequestController.create').validator('CreateTripRequest')
     Route.post(`${trip_request}/accept`, 'TripRequestController.accept').validator('AcceptTripRequest')
+
+    // track cycle
+    Route.post(`${settings}/change-password`, 'UserController.changePassword')
+    // Route.post(`${trip_request}/accept`, 'TripRequestController.accept').validator('AcceptTripRequest')
 
     // Route.post(`${track_request}/update-coordinate`, 'TrackRequestController.updateTrackRequestCordinate').validator("UpdateTrackRequestCoordinate")
   

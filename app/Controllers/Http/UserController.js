@@ -1,6 +1,7 @@
 'use strict'
 
 const User = use('App/Models/User');
+const {validateAll} = use('Validator');
 
 const Database = use('Database')
 const Role = use('Role')
@@ -135,6 +136,55 @@ class UserController {
             message:'Account created successful',
             payload:user
         });
+    }
+
+    async changePassword({request, response, auth}){
+        
+        const request_data = request.all()
+
+        let user = await auth.getUser()
+
+        const validation = await validateAll(request_data,{
+            current_password:'required',
+            password:'required|confirmed',
+        },{
+            'current_password.required':'You must provide your current password',
+            'password.required':'You must provide your new password',
+            'password.confirmed':'Your password confirmation does not match',
+        })
+
+        if(validation.fails()) return response.status(400).json({
+            status:false,
+            message:"Invalid request parameter supplied",
+            errors:validation.messages()
+        })
+
+        // current password == pass fail
+        if(request_data.password.trim() === request_data.current_password.trim()) return response.status(400).json({
+            status:false,
+            message:"New Password must be different from current password"
+        })
+
+        // check if current_password == the user password
+        const isSame = await Hash.verify(request_data.current_password.trim(), user.password)
+
+        if(!isSame) return response.status(400).json({
+            status:false,
+            message:"Invalid Password supplied"
+        })
+
+        
+
+        user.password = request_data.password.trim()
+
+        user.save()
+
+        return response.status(400).json({
+            status:true,
+            message:"Password updated successfully"
+        })
+
+
     }
 
     async login({ request, response, auth }){
